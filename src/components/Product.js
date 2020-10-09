@@ -3,10 +3,8 @@ import React from "react";
 import "./product.css";
 import { useStateValue } from "../containers/StateProvider";
 
-function Product({ id, title, price, rating, image }) {
-    const [{ basket }, dispatch] = useStateValue();
-
-    console.log("this is the basket", basket);
+function Product({ id, title, price, rating, image, unavailable }) {
+    const [, dispatch] = useStateValue();
 
     // Sends the specified item into the basket
     const addToBasket = () => {
@@ -18,6 +16,7 @@ function Product({ id, title, price, rating, image }) {
                 image: image,
                 price: price,
                 rating: rating,
+                unavailable: unavailable,
             },
         });
     };
@@ -27,9 +26,17 @@ function Product({ id, title, price, rating, image }) {
             <div className="product__info">
                 <p>{title}</p>
                 <p className="product__price">
-                    <small>$</small>
-                    <strong>{price}</strong>
+                    {/* If unavailable prop will pass, "Currently unavailable" will be shown instead of price and rating */}
+                    {unavailable ? (
+                        <strong>Currently unavailable</strong>
+                    ) : (
+                        <>
+                            <small>$</small>
+                            <strong>{price}</strong>
+                        </>
+                    )}
                 </p>
+                {/* Rating section */}
                 <div className="product__rating">
                     {Array(rating)
                         .fill()
@@ -39,9 +46,13 @@ function Product({ id, title, price, rating, image }) {
                 </div>
             </div>
 
+            {/* image */}
             <img src={image} alt="" />
 
-            <button onClick={addToBasket}>Add to Basket</button>
+            {/* Add button */}
+            <button disabled={unavailable} onClick={addToBasket}>
+                Add to Basket
+            </button>
         </div>
     );
 }
